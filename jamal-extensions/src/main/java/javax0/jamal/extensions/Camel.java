@@ -8,9 +8,9 @@ import javax0.jamal.tools.InputHandler;
 public class Camel {
 
     private static String sentence(String s) {
-        var c = new StringBuilder();
-        var first = true;
-        for (var ch : s.toCharArray()) {
+        StringBuilder c = new StringBuilder();
+        boolean first = true;
+        for (char ch : s.toCharArray()) {
             if (Character.isUpperCase(ch) && !first) {
                 c.append(" ");
             }
@@ -21,9 +21,9 @@ public class Camel {
     }
 
     private static String cstyle(String s, char sep) {
-        var c = new StringBuilder();
-        var first = true;
-        for (var ch : s.toCharArray()) {
+        StringBuilder c = new StringBuilder();
+        boolean first = true;
+        for (final char ch : s.toCharArray()) {
             if (Character.isUpperCase(ch) && !first) {
                 c.append(sep);
             }
@@ -34,9 +34,9 @@ public class Camel {
     }
 
     private static String camelCase(String s) {
-        var cased = new StringBuilder();
+        StringBuilder cased = new StringBuilder();
         boolean inside = true;
-        for (final var c : s.toCharArray()) {
+        for (final char c : s.toCharArray()) {
             if (Character.isAlphabetic(c) || Character.isDigit(c)) {
                 cased.append(inside ? Character.toLowerCase(c) : Character.toUpperCase(c));
                 inside = true;

@@ -18,7 +18,7 @@ public class MacroRegister implements javax0.jamal.api.MacroRegister {
 
     public Optional<UserDefinedMacro> getUserMacro(String id) {
         for (int level = udMacroStack.size() - 1; level > -1; level--) {
-            var map = udMacroStack.get(level);
+            Map<String,UserDefinedMacro> map = udMacroStack.get(level);
             if (map.containsKey(id)) {
                 return Optional.of(map.get(id));
             }
@@ -28,7 +28,7 @@ public class MacroRegister implements javax0.jamal.api.MacroRegister {
 
     public Optional<Macro> getMacro(String id) {
         for (int level = macroStack.size() - 1; level > -1; level--) {
-            var map = macroStack.get(level);
+            Map<String,Macro> map = macroStack.get(level);
             if (map.containsKey(id)) {
                 return Optional.of(map.get(id));
             }
@@ -69,7 +69,7 @@ public class MacroRegister implements javax0.jamal.api.MacroRegister {
     @Override
     public void export(String id) throws BadSyntax {
         if (udMacroStack.size() > 1) {
-            var macro = udMacroStack.get(udMacroStack.size() - 1).get(id);
+            UserDefinedMacro macro = udMacroStack.get(udMacroStack.size() - 1).get(id);
             if (macro == null) {
                 throw new BadSyntax("Macro '" + id + "' cannot be exported");
             }
@@ -116,7 +116,7 @@ public class MacroRegister implements javax0.jamal.api.MacroRegister {
     @Override
     public String open() {
         for (int level = delimiters.size() - 1; level > -1; level--) {
-            var delim = delimiters.get(level);
+            Delimiters delim = delimiters.get(level);
             if (delim.open() != null) {
                 return delim.open();
             }
@@ -127,7 +127,7 @@ public class MacroRegister implements javax0.jamal.api.MacroRegister {
     @Override
     public String close() {
         for (int level = delimiters.size() - 1; level > -1; level--) {
-            var delim = delimiters.get(level);
+            Delimiters delim = delimiters.get(level);
             if (delim.close() != null) {
                 return delim.close();
             }
@@ -154,17 +154,17 @@ public class MacroRegister implements javax0.jamal.api.MacroRegister {
     @Override
     public void separators(String openDelimiter, String closeDelimiter) throws BadSyntax {
         if (openDelimiter == null || closeDelimiter == null) {
-            var delim = delimiters.get(delimiters.size() - 1);
-            var list = savedDelimiters.get(savedDelimiters.size() - 1);
+            Delimiters delim = delimiters.get(delimiters.size() - 1);
+            List<Delimiters> list = savedDelimiters.get(savedDelimiters.size() - 1);
             if (list.size() == 0) {
                 throw new BadSyntax("There was no saved macro start and end string to restore.");
             }
-            var savedDelim = list.remove(list.size() - 1);
+            Delimiters savedDelim = list.remove(list.size() - 1);
             delim.separators(savedDelim.open(), savedDelim.close());
         } else {
-            var delim = delimiters.get(delimiters.size() - 1);
-            var list = savedDelimiters.get(savedDelimiters.size() - 1);
-            var savedDelim = new javax0.jamal.engine.Delimiters();
+            Delimiters delim = delimiters.get(delimiters.size() - 1);
+            List<Delimiters> list = savedDelimiters.get(savedDelimiters.size() - 1);
+            Delimiters savedDelim = new javax0.jamal.engine.Delimiters();
             savedDelim.separators(delim.open(), delim.close());
             list.add(savedDelim);
             delim.separators(openDelimiter, closeDelimiter);

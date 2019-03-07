@@ -8,10 +8,7 @@ import javax0.jamal.tracer.TraceRecord;
 import javax0.jamal.tracer.TraceRecordNull;
 import javax0.jamal.tracer.TraceRecordReal;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -68,7 +65,7 @@ public class Processor implements javax0.jamal.api.Processor {
         if (traceFile == null) {
             return new TraceRecordNull();
         } else {
-            final var tr = new TraceRecordReal(level);
+            final TraceRecord tr = new TraceRecordReal(level);
             tr.position(position);
             traces.add(tr);
             return tr;
@@ -82,7 +79,7 @@ public class Processor implements javax0.jamal.api.Processor {
 
     @Override
     public String process(final Input in) throws BadSyntax {
-        final var output = new javax0.jamal.tools.Input();
+        final Input output = new javax0.jamal.tools.Input();
         try {
             level++;
             while (in.length() > 0) {
@@ -119,11 +116,11 @@ public class Processor implements javax0.jamal.api.Processor {
      * @param input  where the text is read from and removed after wards
      */
     private void processText(Input output, Input input) {
-        final var tr = getTraceRecord(input.getPosition());
+        final TraceRecord tr = getTraceRecord(input.getPosition());
         tr.type("text");
-        final var nextMacroStart = input.indexOf(macros.open());
+        final int nextMacroStart = input.indexOf(macros.open());
         if (nextMacroStart != -1) {
-            final var text = input.substring(0, nextMacroStart);
+            final String text = input.substring(0, nextMacroStart);
             tr.targetAppend(text);
             output.append(text);
             skip(input, nextMacroStart);
@@ -140,16 +137,16 @@ public class Processor implements javax0.jamal.api.Processor {
      * @param input  from where the macro source is read and removed
      */
     private void processMacro(Input output, Input input) throws BadSyntax {
-        final var tr = getTraceRecord(input.getPosition());
+        final TraceRecord tr = getTraceRecord(input.getPosition());
         tr.type("macro");
-        final var macroStartPosition = input.getPosition();
+        final Position macroStartPosition = input.getPosition();
         skip(input, macros.open());
         skipWhiteSpaces(input);
-        final var macroRaw = getNextMacroBody(input);
+        final String macroRaw = getNextMacroBody(input);
         final String macroProcessed;
         if (!firstCharIs(macroRaw, '@')) {
-            var marker = new Marker("{@" + "");
-            final var macroInputBefore = new javax0.jamal.tools.Input(macroRaw, macroStartPosition);
+            Marker marker = new Marker("{@" + "");
+            final Input macroInputBefore = new javax0.jamal.tools.Input(macroRaw, macroStartPosition);
             macros.push(marker);
             macroProcessed = process(macroInputBefore);
             macros.pop(marker);
@@ -157,8 +154,8 @@ public class Processor implements javax0.jamal.api.Processor {
             macroProcessed = macroRaw;
         }
         tr.sourceAppend(macroProcessed);
-        final var macroInputAfter = new javax0.jamal.tools.Input(macroProcessed, macroStartPosition);
-        final var text = evalMacro(macroInputAfter);
+        final Input macroInputAfter = new javax0.jamal.tools.Input(macroProcessed, macroStartPosition);
+        final String text = evalMacro(macroInputAfter);
         tr.targetAppend(text);
         output.append(text);
     }
@@ -170,8 +167,8 @@ public class Processor implements javax0.jamal.api.Processor {
      * @return the evaluated macro
      */
     private String evalMacro(final Input input) throws BadSyntaxAt {
-        var ref = input.getPosition();
-        var isBuiltin = macroIsBuiltIn(input);
+        Position ref = input.getPosition();
+        boolean isBuiltin = macroIsBuiltIn(input);
         final String macroId;
         final boolean verbatim;
         if (isBuiltin) {
@@ -188,8 +185,8 @@ public class Processor implements javax0.jamal.api.Processor {
             macroId = NOT_USED;
         }
         if (isBuiltin) {
-            var builtin = macros.getMacro(macroId);
-            if (builtin.isEmpty()) {
+            Optional<Macro> builtin = macros.getMacro(macroId);
+            if (!builtin.isPresent()) {
                 throw new BadSyntaxAt("There is no built-in macro with the id '" + macroId + "'", ref);
             }
             try {
@@ -211,29 +208,29 @@ public class Processor implements javax0.jamal.api.Processor {
     }
 
     private String evalUserDefinedMacro(final Input input) throws BadSyntax {
-        final var tr = getTraceRecord(input.getPosition());
+        final TraceRecord tr = getTraceRecord(input.getPosition());
         tr.type("user def macro");
         tr.sourceAppend(input.toString());
-        var ref = input.getPosition();
+        Position ref = input.getPosition();
         final boolean reportUndef = input.length() == 0 || input.charAt(0) != '?';
         if (!reportUndef) {
             skip(input, 1);
         }
         skipWhiteSpaces(input);
-        var id = fetchId(input);
+        String id = fetchId(input);
         if (id.length() == 0) {
             throw new BadSyntaxAt("Zero length user defined macro name was found.", ref);
         }
         skipWhiteSpaces(input);
         final String[] parameters;
         if (input.length() > 0) {
-            var separator = input.substring(0, 1);
+            String separator = input.substring(0, 1);
             skip(input, 1);
             parameters = input.toString().split(Pattern.quote(separator),-1);
         } else {
             parameters = new String[0];
         }
-        var udMacro = macros.getUserMacro(id);
+        Optional<UserDefinedMacro> udMacro = macros.getUserMacro(id);
         tr.targetAppend("id: "+udMacro);
         tr.targetAppend("parameters:\n");
         tr.targetAppend(Arrays.stream(parameters).collect(Collectors.joining("\n")));
@@ -266,10 +263,10 @@ public class Processor implements javax0.jamal.api.Processor {
 
 
     String getNextMacroBody(final Input input) throws BadSyntaxAt {
-        var refStack = new LinkedList<Position>();
+        LinkedList<Position> refStack = new LinkedList<>();
         refStack.add(input.getPosition());
-        var counter = 1; // we are after one macro opening, so that counts as one opening
-        final var output = new javax0.jamal.tools.Input();
+        int counter = 1; // we are after one macro opening, so that counts as one opening
+        final Input output = new javax0.jamal.tools.Input();
 
         while (counter > 0) {// while there is any opened macro
             if (input.length() == 0) {// some macro was not closed
@@ -290,8 +287,8 @@ public class Processor implements javax0.jamal.api.Processor {
                     moveMacroCloseToOutput(input, output);
                 }
             } else {
-                var open = input.indexOf(macros.open());
-                var close = input.indexOf(macros.close());
+                int open = input.indexOf(macros.open());
+                int close = input.indexOf(macros.close());
                 if (contains(close) && (!contains(open) || close < open)) {
                     open = close;
                 }

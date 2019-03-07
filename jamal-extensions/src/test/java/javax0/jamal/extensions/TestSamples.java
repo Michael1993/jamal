@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestSamples {
     private javax0.jamal.api.Input createInput(String testFile) throws IOException {
-        var fileName = this.getClass().getResource(testFile).getFile();
+        String fileName = this.getClass().getResource(testFile).getFile();
         fileName = fixupPath(fileName);
-        var fileContent = Files.lines(Paths.get(fileName)).collect(Collectors.joining("\n"));
+        String fileContent = Files.lines(Paths.get(fileName)).collect(Collectors.joining("\n"));
         return new Input(fileContent, new Position(fileName));
     }
 
@@ -36,8 +36,8 @@ class TestSamples {
     }
 
     private String result(String testFile) throws IOException, BadSyntax {
-        var in = createInput(testFile);
-        final var sut = new Processor("{", "}");
+        javax0.jamal.api.Input in = createInput(testFile);
+        final Processor sut = new Processor("{", "}");
         return sut.process(in);
     }
 

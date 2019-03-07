@@ -7,9 +7,9 @@ import static javax0.jamal.tools.InputHandler.*;
 public class Script implements Macro {
     @Override
     public String evaluate(Input input, Processor processor) throws BadSyntaxAt {
-        var ref = input.getPosition();
+        Position ref = input.getPosition();
         skipWhiteSpaces(input);
-        var id = fetchId(input);
+        String id = fetchId(input);
         skipWhiteSpaces(input);
         final String scriptType;
         if (input.length() > 0 && input.charAt(0) == '/') {

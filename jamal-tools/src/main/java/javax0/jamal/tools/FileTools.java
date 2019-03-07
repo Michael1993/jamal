@@ -62,8 +62,8 @@ public class FileTools {
                 && fileName.charAt(1) == ':')) {
             return fileName;
         }
-        final var unixedReference = reference.replaceAll("\\\\", "/");
-        final var referencePath = unixedReference.contains("/") ?
+        final String unixedReference = reference.replaceAll("\\\\", "/");
+        final String referencePath = unixedReference.contains("/") ?
             unixedReference.substring(0, unixedReference.lastIndexOf("/") + 1)
             : "";
         return Paths.get(referencePath)

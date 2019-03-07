@@ -54,7 +54,7 @@ public interface Input extends CharSequence {
     }
 
     default Input delete(int start, int end) {
-        var sb = getSB();
+        StringBuilder sb = getSB();
         for (int i = start; i < end && i < sb.length(); i++) {
             if (sb.charAt(i) == '\n') {
                 stepLine();

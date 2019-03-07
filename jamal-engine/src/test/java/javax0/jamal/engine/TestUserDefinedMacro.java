@@ -32,14 +32,14 @@ public class TestUserDefinedMacro {
     @Test
     @DisplayName("creates the macro object when there are no arguments")
     public void testNoArguments() throws BadSyntax {
-        final var sut = new UserDefinedMacro("xx", "");
+        final UserDefinedMacro sut = new UserDefinedMacro("xx", "");
     }
 
     @Test
     @DisplayName("replaces arguments with actual values")
     public void testReplaces() throws BadSyntax {
-        final var sut = new UserDefinedMacro("xx", "a{b}c{d}", "a", "b", "c", "d");
-        final var result = sut.evaluate("bbb", "ccc", "ddd", "aaa");
+        final UserDefinedMacro sut = new UserDefinedMacro("xx", "a{b}c{d}", "a", "b", "c", "d");
+        final String result = sut.evaluate("bbb", "ccc", "ddd", "aaa");
         Assertions.assertEquals("bbb{ccc}ddd{aaa}", result);
     }
 }

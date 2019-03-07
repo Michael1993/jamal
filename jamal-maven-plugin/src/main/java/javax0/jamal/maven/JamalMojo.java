@@ -1,5 +1,6 @@
 package javax0.jamal.maven;
 
+import org.apache.maven.plugin.logging.Log;
 import javax0.jamal.api.Input;
 import javax0.jamal.api.Position;
 import javax0.jamal.engine.Processor;
@@ -63,13 +64,13 @@ public class JamalMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException {
         normalizeConfiguration();
-        final var log = getLog();
+        final Log log = getLog();
         log.debug("Jamal started");
         logParameters();
         normalizeDirectories();
         logParameters();
-        final var includePredicate = getPathPredicate(filePattern);
-        final var excludePredicate = getPathPredicate(exclude).negate();
+        final Predicate<Path> includePredicate = getPathPredicate(filePattern);
+        final Predicate<Path> excludePredicate = getPathPredicate(exclude).negate();
         processingSuccessful = true;
         try {
             Files.walk(Paths.get(sourceDirectory))
@@ -89,11 +90,11 @@ public class JamalMojo extends AbstractMojo {
     }
 
     private void executeJamal(final Path inputPath) {
-        var log = getLog();
+        Log log = getLog();
         log.debug("Jamal processing " + qq(inputPath.toString()));
         try {
-            final var result = new Processor(macroOpen, macroClose).process(createInput(inputPath));
-            final var output = calculateTargetFile(inputPath);
+            final String result = new Processor(macroOpen, macroClose).process(createInput(inputPath));
+            final Path output = calculateTargetFile(inputPath);
             if (output != null) {
                 log.debug("Jamal output for the file is " + qq(output.toString()));
                 writeOutput(output, result);
@@ -117,20 +118,20 @@ public class JamalMojo extends AbstractMojo {
     }
 
     private void logException(Exception e, Consumer<CharSequence> log) {
-        var sw = new StringWriter();
-        var out = new PrintWriter(sw);
+        StringWriter sw = new StringWriter();
+        PrintWriter out = new PrintWriter(sw);
         e.printStackTrace(out);
         Arrays.stream(sw.toString().split("\n")).forEach(log);
     }
 
     private Input createInput(Path inputFile) throws IOException {
-        var fileContent = Files.lines(inputFile).collect(Collectors.joining("\n"));
+        String fileContent = Files.lines(inputFile).collect(Collectors.joining("\n"));
         return new javax0.jamal.tools.Input(fileContent, new Position(inputFile.toString(), 1));
     }
 
     private Path calculateTargetFile(final Path inputFile) {
-        final var log = getLog();
-        final var inputFileName = inputFile.toString();
+        final Log log = getLog();
+        final String inputFileName = inputFile.toString();
         if (!inputFile.toString().startsWith(sourceDirectory)) {
             log.error("The input file " + qq(inputFileName)
                 + " is not in the source directory " + qq(sourceDirectory));
@@ -145,7 +146,7 @@ public class JamalMojo extends AbstractMojo {
      * Convert directory names ro normalized format
      */
     private void normalizeDirectories() throws MojoExecutionException {
-        final var log = getLog();
+        final Log log = getLog();
         if (sourceDirectory == null) {
             sourceDirectory = Paths.get(defaultSourceDirectory + "/..").toString();
         }
@@ -185,7 +186,7 @@ public class JamalMojo extends AbstractMojo {
     }
 
     private void logParameters() {
-        var log = getLog();
+        Log log = getLog();
         log.debug("Configuration:");
         log.debug("    macroOpen=" + macroOpen);
         log.debug("    macroClose=" + macroClose);

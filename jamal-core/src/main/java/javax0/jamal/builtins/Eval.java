@@ -5,6 +5,8 @@ import javax0.jamal.api.Input;
 import javax0.jamal.api.Macro;
 import javax0.jamal.api.Processor;
 
+import javax.script.ScriptEngine;
+
 import static javax0.jamal.tools.InputHandler.*;
 import static javax0.jamal.tools.ScriptingTools.getEngine;
 import static javax0.jamal.tools.ScriptingTools.resultToString;
@@ -20,7 +22,7 @@ public class Eval implements Macro {
         } else {
             return processor.process(input);
         }
-        var engine = getEngine(scriptType);
+        ScriptEngine engine = getEngine(scriptType);
         try {
             return resultToString(engine.eval(input.toString()));
         } catch (Exception e) {

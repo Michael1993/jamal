@@ -6,7 +6,7 @@
     
     <groupId>com.javax0.jamal</groupId>
     <artifactId>jamal-parent</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.2.JDK8</version>
     
     
 
@@ -89,7 +89,8 @@
     
 
                     <configuration>
-                        <release>11</release>
+                        <source>1.8</source>
+                        <target>1.8</target>
                     </configuration>
                 </plugin>
 
@@ -124,32 +125,32 @@
 <dependency>
 <groupId>com.javax0.jamal</groupId>
 <artifactId>jamal-testsupport</artifactId>
-<version>1.0.2</version>
+<version>1.0.2.JDK8</version>
 </dependency>
 <dependency>
 <groupId>com.javax0.jamal</groupId>
 <artifactId>jamal-api</artifactId>
-<version>1.0.2</version>
+<version>1.0.2.JDK8</version>
 </dependency>
 <dependency>
 <groupId>com.javax0.jamal</groupId>
 <artifactId>jamal-core</artifactId>
-<version>1.0.2</version>
+<version>1.0.2.JDK8</version>
 </dependency>
 <dependency>
 <groupId>com.javax0.jamal</groupId>
 <artifactId>jamal-tools</artifactId>
-<version>1.0.2</version>
+<version>1.0.2.JDK8</version>
 </dependency>
 <dependency>
 <groupId>com.javax0.jamal</groupId>
 <artifactId>jamal-engine</artifactId>
-<version>1.0.2</version>
+<version>1.0.2.JDK8</version>
 </dependency>
 <dependency>
 <groupId>com.javax0.jamal</groupId>
 <artifactId>jamal-extensions</artifactId>
-<version>1.0.2</version>
+<version>1.0.2.JDK8</version>
 </dependency>
         
 <dependency>

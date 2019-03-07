@@ -6,6 +6,7 @@ import javax0.jamal.engine.macro.Segment;
 import javax0.jamal.engine.macro.TextSegment;
 import javax0.jamal.tools.ScriptingTools;
 
+import javax.script.ScriptEngine;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public class UserDefinedMacro implements javax0.jamal.api.UserDefinedMacro {
     }
 
     private void ensureSafety() throws BadSyntax {
-        final var badSyntax = new BadSyntax("User defined macro parameter name should not be a substring of another parameter.");
+        final BadSyntax badSyntax = new BadSyntax("User defined macro parameter name should not be a substring of another parameter.");
         for (int i = 0; i < parameters.length; i++) {
             for (int j = 0; j < parameters.length; j++) {
                 if (i != j) {
@@ -97,14 +98,14 @@ public class UserDefinedMacro implements javax0.jamal.api.UserDefinedMacro {
     @Override
     public String evaluate(String... actualValues) throws BadSyntax {
         if (actualValues.length != parameters.length) {
-            var badSyntax = new BadSyntax("Macro '" + id + "' needs " + parameters.length + " arguments and got " + actualValues.length);
-            for (final var actual : actualValues) {
+            BadSyntax badSyntax = new BadSyntax("Macro '" + id + "' needs " + parameters.length + " arguments and got " + actualValues.length);
+            for (final String actual : actualValues) {
                 badSyntax.parameter(actual);
             }
             throw badSyntax;
         }
         if (isScript) {
-            var engine = getEngine(scriptType);
+            ScriptEngine engine = getEngine(scriptType);
             for (int i = 0; i < parameters.length; i++) {
                 populate(engine, parameters[i], actualValues[i]);
             }
@@ -114,7 +115,7 @@ public class UserDefinedMacro implements javax0.jamal.api.UserDefinedMacro {
                 throw new BadSyntax("Script '" + id + "' threw exception", e);
             }
         } else {
-            var values = buildValueMap(actualValues);
+            Map<String,String> values = buildValueMap(actualValues);
             if (root == null) {
                 root = new TextSegment(null, content);
                 for (int i = 0; i < actualValues.length; i++) {
@@ -123,7 +124,7 @@ public class UserDefinedMacro implements javax0.jamal.api.UserDefinedMacro {
                     }
                 }
             }
-            final var output = new StringBuilder(segmentsLengthSum(root, values));
+            final StringBuilder output = new StringBuilder(segmentsLengthSum(root, values));
             for (Segment segment = root; segment != null; segment = segment.next()) {
                 if (segment instanceof TextSegment) {
                     output.append(segment.content());
@@ -136,7 +137,7 @@ public class UserDefinedMacro implements javax0.jamal.api.UserDefinedMacro {
     }
 
     private Map<String, String> buildValueMap(String[] values) {
-        final var map = new HashMap<String, String>(values.length);
+        final Map<String,String> map = new HashMap<String, String>(values.length);
         for (int i = 0; i < parameters.length; i++) {
             map.put(parameters[i], values[i]);
         }

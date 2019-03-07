@@ -32,8 +32,8 @@ public class TraceDumper {
         } catch (Exception fnfe) {
             fnfe.printStackTrace(System.err);
         }
-        try (var raf = new RandomAccessFile(fileName, "rw")) {
-            var lag = LAG;
+        try (RandomAccessFile raf = new RandomAccessFile(fileName, "rw")) {
+            long lag = LAG;
             if (raf.length() < lag) {
                 lag = raf.length();
             }
@@ -41,8 +41,8 @@ public class TraceDumper {
                 raf.seek(raf.length() - LAG);
                 byte[] buffer = new byte[(int) lag];
                 raf.readFully(buffer);
-                var ending = new String(buffer, StandardCharsets.UTF_8);
-                var index = ending.indexOf(END_TAG);
+                String ending = new String(buffer, StandardCharsets.UTF_8);
+                int index = ending.indexOf(END_TAG);
                 if (index >= -1) {
                     raf.seek(raf.length() - lag + index);
                 } else {
@@ -59,7 +59,7 @@ public class TraceDumper {
                 raf.writeBytes("<trace hasException=\"true\">\n");
             }
             int i = 1;
-            for (final var trace : traces) {
+            for (final TraceRecord trace : traces) {
                 raf.writeBytes("<record " +
                         "column=\"" + trace.position().column + "\" " +
                         "line=\"" + trace.position().line + "\" " +
@@ -97,8 +97,8 @@ public class TraceDumper {
                 raf.writeBytes("<exception " +
                         " message=\"" + ex.getMessage().replaceAll("\n", " ") + "\"" +
                         ">\n");
-                var sw = new StringWriter();
-                var pw = new PrintWriter(sw);
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
                 ex.printStackTrace(pw);
                 sw.close();
                 raf.writeBytes(cData(sw.toString()));
@@ -120,19 +120,33 @@ public class TraceDumper {
         return string.replaceAll("\\]\\]>","]]]]<![CDATA[>");
     }
 
+    private String spaces(int times){
+        StringBuilder sb = new StringBuilder();
+        while( times-- > 0 ){
+            sb.append(" ");
+        }
+        return sb.toString();
+    }
+    private String marks(int times){
+        StringBuilder sb = new StringBuilder();
+        while( times-- > 0 ){
+            sb.append("#");
+        }
+        return sb.toString();
+    }
     private void dumpText(List<TraceRecord> traces, String fileName, Exception ex) {
-        try (final var fos = new FileOutputStream(fileName, true);
-             final var pw = new PrintWriter(fos)) {
-            pw.println("#".repeat(80));
-            pw.println("###" + " ".repeat(74) + "###");
-            pw.println("###" + " ".repeat(74) + "###");
-            pw.println("###" + " ".repeat(34) + " TRACE" + " ".repeat(34) + "###");
-            pw.println("###" + " ".repeat(74) + "###");
-            pw.println("###" + " ".repeat(74) + "###");
-            pw.println("#".repeat(80));
+        try (final FileOutputStream fos = new FileOutputStream(fileName, true);
+             final PrintWriter pw = new PrintWriter(fos)) {
+            pw.println(marks(80));
+            pw.println("###" + spaces(74) + "###");
+            pw.println("###" + spaces(74) + "###");
+            pw.println("###" + spaces(34) + " TRACE" + spaces(34) + "###");
+            pw.println("###" + spaces(74) + "###");
+            pw.println("###" + spaces(74) + "###");
+            pw.println(marks(80));
             int i = 1;
-            for (final var trace : traces) {
-                final var tab = " ".repeat(trace.level());
+            for (final TraceRecord trace : traces) {
+                final String tab = spaces(trace.level());
                 pw.println(tab + "LEVEL:" + trace.level() + " record " + i + ".");
                 pw.println(tab + trace.position().file + "/" + trace.position().line + ":" + trace.position().column);
                 pw.println(tab + trace.type());

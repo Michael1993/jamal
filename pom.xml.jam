@@ -34,7 +34,8 @@
                 {plugin|
                     {GAV :org.apache.maven.plugins:maven-compiler-plugin:3.8.0}
                     <configuration>
-                        <release>{JAVA_RELEASE}</release>
+                        <source>{JAVA_RELEASE}</source>
+                        <target>{JAVA_RELEASE}</target>
                     </configuration>
                 }
 

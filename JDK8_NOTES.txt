@@ -1,0 +1,5 @@
+modify version.jim to 1.8
+pom.xml.jam release -> source and target because release for 1.8 is not supported
+
+ rm $(find . -name module-info.java)
+

@@ -1,10 +1,8 @@
 package javax0.jamal.builtins;
 
-import javax0.jamal.api.BadSyntax;
-import javax0.jamal.api.Input;
-import javax0.jamal.api.Macro;
-import javax0.jamal.api.Processor;
+import javax0.jamal.api.*;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -20,24 +18,24 @@ public class Use implements Macro {
 
     @Override
     public String evaluate(Input input, Processor processor) throws BadSyntax {
-        var macroImports = input.toString().split(",");
-        for (final var macroImport : macroImports) {
-            var stripped = macroImport
+        String[] macroImports = input.toString().split(",");
+        for (final String macroImport : macroImports) {
+            String stripped = macroImport
                 .trim()
                 .replace("\n", " ")
                 .replace("\r", " ")
                 .replace("\t", " ")
                 .replaceAll("\\s+", " ");
             if (stripped.length() > 0) {
-                var matcher = pattern.matcher(stripped);
+                Matcher matcher = pattern.matcher(stripped);
                 if (!matcher.matches()) {
                     throw new BadSyntax("use macro has bad syntax '" + stripped + "'");
                 }
-                final var isGlobal = matcher.group(1).length() > 0;
-                final var klassName = matcher.group(2);
-                final var alias = matcher.group(3);
+                final boolean isGlobal = matcher.group(1).length() > 0;
+                final String klassName = matcher.group(2);
+                final String alias = matcher.group(3);
                 final Macro macro = forName(klassName);
-                final var register = processor.getRegister();
+                final MacroRegister register = processor.getRegister();
                 if (isGlobal) {
                     if (alias != null && alias.length() > 0) {
                         register.global(macro, alias);
@@ -66,7 +64,7 @@ public class Use implements Macro {
             if (!klassName.contains(".")) {
                 throw new BadSyntax("Class '" + klassName + "' cannot be used as macro", e);
             }
-            var lastDot = klassName.lastIndexOf('.');
+            int lastDot = klassName.lastIndexOf('.');
             return forName(klassName.substring(0, lastDot) + "$" + klassName.substring(lastDot + 1));
         }
         try {

@@ -13,14 +13,14 @@ public class Include implements Macro {
     @Override
     public String evaluate(Input input, Processor processor) throws BadSyntax {
         skipWhiteSpaces(input);
-        var reference = input.getReference();
-        var fileName = absolute(reference, input.toString().trim());
+        String reference = input.getReference();
+        String fileName = absolute(reference, input.toString().trim());
         if (depth-- == 0) {
             throw new BadSyntax("Include depth is too deep");
         }
-        var marker = new Marker("{@include " + fileName + "}");
+        Marker marker = new Marker("{@include " + fileName + "}");
         processor.getRegister().push(marker);
-        var result = processor.process(getInput(fileName));
+        String result = processor.process(getInput(fileName));
         processor.getRegister().pop(marker);
         return result;
     }

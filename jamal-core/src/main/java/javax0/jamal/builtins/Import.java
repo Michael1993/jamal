@@ -36,8 +36,8 @@ public class Import implements Stackable {
     @Override
     public String evaluate(Input input, Processor processor) throws BadSyntax {
         skipWhiteSpaces(input);
-        var reference = input.getReference();
-        var fileName = absolute(reference, input.toString().trim());
+        String reference = input.getReference();
+        String fileName = absolute(reference, input.toString().trim());
         if (wasNotImported(fileName)) {
             importedAlready.get(importedAlready.size() - 1).add(fileName);
             processor.process(getInput(fileName));
@@ -47,7 +47,7 @@ public class Import implements Stackable {
 
     private boolean wasNotImported(String fileName) {
         for (int level = importedAlready.size() - 1; level > -1; level--) {
-            var importSet = importedAlready.get(level);
+            Set<String> importSet = importedAlready.get(level);
             if (importSet.contains(fileName)) {
                 return false;
             }

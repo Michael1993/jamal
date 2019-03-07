@@ -8,6 +8,8 @@ import javax0.jamal.engine.Processor;
 import javax0.jamal.engine.UserDefinedMacro;
 import org.junit.jupiter.api.Assertions;
 
+import javax.crypto.Mac;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -76,13 +78,13 @@ public class TestThat {
             InvocationTargetException,
             BadSyntax {
         Macro sut = createSut();
-        var in = new javax0.jamal.tools.Input(input, null);
-        var actual = sut.evaluate(in, processor);
+        Input in = new javax0.jamal.tools.Input(input, null);
+        String actual = sut.evaluate(in, processor);
         Assertions.assertEquals(expected, actual);
     }
 
     private Macro createSut() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-        var constructor = klass.getDeclaredConstructor();
+        Constructor<? extends Macro> constructor = klass.getDeclaredConstructor();
         constructor.setAccessible(true);
         return constructor.newInstance();
     }
@@ -101,9 +103,9 @@ public class TestThat {
             IllegalAccessException,
             InstantiationException,
             InvocationTargetException {
-        var sut = createSut();
-        var in = new javax0.jamal.tools.Input(input, null);
-        var processor = new Processor();
+        Macro sut = createSut();
+        Input in = new javax0.jamal.tools.Input(input, null);
+        Processor processor = new Processor();
         Assertions.assertThrows(throwable, () -> sut.evaluate(in, processor));
     }
 
@@ -134,7 +136,7 @@ public class TestThat {
      * @throws BadSyntax when the underlying call throws this exception
      */
     public TestThat global(String id, String content, String... parameters) throws BadSyntax {
-        var macro = new javax0.jamal.engine.UserDefinedMacro(id, content, parameters);
+        UserDefinedMacro macro = new javax0.jamal.engine.UserDefinedMacro(id, content, parameters);
         processor.getRegister().global(macro);
         return this;
     }
@@ -175,7 +177,7 @@ public class TestThat {
      * @throws BadSyntax when the underlying call throws this exception
      */
     public TestThat define(String id, String content, String... parameters) throws BadSyntax {
-        var macro = new UserDefinedMacro(id, content, parameters);
+        UserDefinedMacro macro = new UserDefinedMacro(id, content, parameters);
         processor.getRegister().define(macro);
         return this;
     }

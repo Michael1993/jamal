@@ -32,15 +32,15 @@ public class If implements Macro {
     @Override
     public String evaluate(Input input, Processor processor) throws BadSyntax {
         skipWhiteSpaces(input);
-        final var separator = input.substring(0, 1);
+        final String separator = input.substring(0, 1);
         skip(input, 1);
-        var testEnd = input.indexOf(separator);
+        int testEnd = input.indexOf(separator);
         if (testEnd == -1) {
             throw new BadSyntax("Test is not terminated by the separator character '" + separator + "' after {@if ...");
         }
-        var test = input.substring(0, testEnd);
+        String test = input.substring(0, testEnd);
         skip(input, testEnd + 1);
-        var positiveEnd = input.indexOf(separator);
+        int positiveEnd = input.indexOf(separator);
         final String positive;
         if (positiveEnd > 0) {
             positive = input.substring(0, positiveEnd);
@@ -49,7 +49,7 @@ public class If implements Macro {
             positive = input.toString();
             skip(input, input.length());
         }
-        var negative = input.toString();
+        String negative = input.toString();
         if (isTrue(test)) {
             return positive;
         } else {

@@ -29,13 +29,13 @@ public class ScriptingTools {
      */
     public static void populate(ScriptEngine engine, String key, String value) {
         try {
-            var intval = Integer.parseInt(value);
+            int intval = Integer.parseInt(value);
             engine.put(key, intval);
             return;
         } catch (NumberFormatException ignored) {
         }
         try {
-            var doubleval = Double.parseDouble(value);
+            double doubleval = Double.parseDouble(value);
             engine.put(key, doubleval);
             return;
         } catch (NumberFormatException ignored) {

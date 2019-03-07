@@ -2,6 +2,7 @@ package javax0.jamal.tools;
 
 import javax0.jamal.api.BadSyntaxAt;
 import javax0.jamal.api.Input;
+import javax0.jamal.api.Position;
 
 import java.util.function.Function;
 
@@ -93,7 +94,7 @@ public class InputHandler {
      * @return the identifier string that was found and removed from the start of the input.
      */
     public static String fetchId(Input input) {
-        final var output = new StringBuilder();
+        final StringBuilder output = new StringBuilder();
         if (input.length() > 0 && validId1stChar(input.charAt(0))) {
             while (input.length() > 0 && validIdChar(input.charAt(0))) {
                 output.append(input.charAt(0));
@@ -197,15 +198,15 @@ public class InputHandler {
      *                     but the parameter list if any is not closed with a {@code )} character.
      */
     public static String[] getParameters(Input input, String id) throws BadSyntaxAt {
-        final var ref = input.getPosition();
+        final Position ref = input.getPosition();
         final String[] params;
         if (firstCharIs(input, '(')) {
             skip(input, 1);
-            var closingParen = input.indexOf(")");
+            int closingParen = input.indexOf(")");
             if (!contains(closingParen)) {
                 throw new BadSyntaxAt("'" + id + "' has parameters, but no ')'", ref);
             }
-            var param = input.substring(0, closingParen);
+            String param = input.substring(0, closingParen);
             skip(input, closingParen + 1);
             skipWhiteSpaces(input);
             params = param.split(",");

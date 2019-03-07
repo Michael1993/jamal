@@ -7,7 +7,7 @@ public class TestCase {
 
     @Test
     public void testCaseLower() throws Exception {
-        var lowerCase = TestThat.forMacro(Case.Lower.class);
+        TestThat lowerCase = TestThat.forMacro(Case.Lower.class);
         lowerCase.fromInput("INPUT").results("input");
         lowerCase.fromInput("INpUT").results("input");
         lowerCase.fromInput("INpuT").results("input");
@@ -18,7 +18,7 @@ public class TestCase {
 
     @Test
     public void testCaseUpper() throws Exception {
-        var upperCase = TestThat.forMacro(Case.Upper.class);
+        TestThat upperCase = TestThat.forMacro(Case.Upper.class);
         upperCase.fromInput("INPUT").results("INPUT");
         upperCase.fromInput("INpUT").results("INPUT");
         upperCase.fromInput("INpuT").results("INPUT");
@@ -29,7 +29,7 @@ public class TestCase {
 
     @Test
     public void testCaseCap() throws Exception {
-        var capitalize = TestThat.forMacro(Case.Cap.class);
+        TestThat capitalize = TestThat.forMacro(Case.Cap.class);
         capitalize.fromInput("INPUT").results("INPUT");
         capitalize.fromInput("INpUT").results("INpUT");
         capitalize.fromInput("INpuT").results("INpuT");
@@ -40,7 +40,7 @@ public class TestCase {
 
     @Test
     public void testCaseDecap() throws Exception {
-        var decapitalize = TestThat.forMacro(Case.Decap.class);
+        TestThat decapitalize = TestThat.forMacro(Case.Decap.class);
         decapitalize.fromInput("INPUT").results("iNPUT");
         decapitalize.fromInput("INpUT").results("iNpUT");
         decapitalize.fromInput("INpuT").results("iNpuT");

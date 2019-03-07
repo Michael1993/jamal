@@ -13,7 +13,7 @@ public class End implements Macro {
     @Override
     public String evaluate(Input input, Processor processor) throws BadSyntax {
         skipWhiteSpaces(input);
-        var marker = new NamedMarker(input.toString().trim(), s -> "{@end " + s + "}");
+        NamedMarker marker = new NamedMarker(input.toString().trim(), s -> "{@end " + s + "}");
         processor.getRegister().pop(marker);
         return "";
     }

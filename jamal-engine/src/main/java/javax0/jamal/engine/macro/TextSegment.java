@@ -13,7 +13,7 @@ public class TextSegment extends Segment {
      * @param parameter the name of the parameter that is used to spit the segment
      */
     private static void split(final TextSegment root, final String parameter) {
-        var it = root;
+        TextSegment it = root;
         //noinspection StatementWithEmptyBody
         while ((it = splitAndGetNext(it, parameter)) != null) ;
     }
@@ -27,11 +27,11 @@ public class TextSegment extends Segment {
      * @return the second text segment or null in case the segment can not be split.
      */
     private static TextSegment splitAndGetNext(final TextSegment it, final String parameter) {
-        final var start = it.text.indexOf(parameter);
+        final int start = it.text.indexOf(parameter);
         if (start < 0) {
             return null;
         }
-        final var textSeg = new TextSegment(it.nextSeg, it.text.substring(start + parameter.length()));
+        final TextSegment textSeg = new TextSegment(it.nextSeg, it.text.substring(start + parameter.length()));
         it.nextSeg = new ParameterSegment(textSeg, parameter);
         it.text = it.text.substring(0, start);
         return textSeg;

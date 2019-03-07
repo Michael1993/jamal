@@ -27,9 +27,9 @@ class TestSamples {
     }
 
     private javax0.jamal.api.Input createInput(String testFile) throws IOException {
-        var fileName = notNull(this.getClass().getResource(testFile), "File '" + testFile + "' does not exist").getFile();
+        String fileName = notNull(this.getClass().getResource(testFile), "File '" + testFile + "' does not exist").getFile();
         fileName = fixupPath(fileName);
-        var fileContent = Files.lines(Paths.get(fileName)).collect(Collectors.joining("\n"));
+        String fileContent = Files.lines(Paths.get(fileName)).collect(Collectors.joining("\n"));
         return new Input(fileContent, new Position(fileName));
     }
 
@@ -47,8 +47,8 @@ class TestSamples {
     }
 
     private String result(String testFile) throws IOException,  BadSyntax {
-        var in = createInput(testFile);
-        final var sut = new Processor("{", "}");
+        javax0.jamal.api.Input in = createInput(testFile);
+        final Processor sut = new Processor("{", "}");
         return sut.process(in);
     }
 
@@ -134,9 +134,9 @@ class TestSamples {
     @Test
     @DisplayName("run documentation script")
     void testDocumentation() throws IOException,  BadSyntax {
-        var fileName = this.getClass().getResource("documentation.out.jam").getFile();
+        String fileName = this.getClass().getResource("documentation.out.jam").getFile();
         fileName = fixupPath(fileName);
-        var fileContent = Files.lines(Paths.get(fileName)).collect(Collectors.joining("\n"));
+        String fileContent = Files.lines(Paths.get(fileName)).collect(Collectors.joining("\n"));
         assertEquals(fileContent, result("documentation.jam"));
     }
 
@@ -222,7 +222,7 @@ class TestSamples {
     
     @Test
     void testErrorLineReport() {
-        final var thrown = assertThrows(BadSyntaxAt.class, () -> result("fail.deep.jam"));
+        final BadSyntaxAt thrown = assertThrows(BadSyntaxAt.class, () -> result("fail.deep.jam"));
         Assertions.assertEquals(3,thrown.getPosition().line);
         Assertions.assertEquals(4,thrown.getPosition().column);
     }
