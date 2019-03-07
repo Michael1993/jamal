@@ -1,5 +1,20 @@
 modify version.jim to 1.8
 pom.xml.jam release -> source and target because release for 1.8 is not supported
 
- rm $(find . -name module-info.java)
+rm $(find . -name module-info.java)
+
+change all var to the actual type
+
+remove JDK 8+ dependencies (e.g.: String.repeat)
+
+Switch to Java 8:
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+
+Compile theproject using Java 8
+
+Switch back to Java 11, because release.sh does not work with JDK8 tools
+export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+
+sh release.sh
+
 

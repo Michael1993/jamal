@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TraceDumper {
-    private static final String sep = "-".repeat(80);
+    private static final String sep = dash(80);
     private static final long LAG = 80L;
     private static final String END_TAG = "</traces>";
 
@@ -61,13 +61,13 @@ public class TraceDumper {
             int i = 1;
             for (final TraceRecord trace : traces) {
                 raf.writeBytes("<record " +
-                        "column=\"" + trace.position().column + "\" " +
-                        "line=\"" + trace.position().line + "\" " +
-                        "file=\"" + trace.position().file + "\" " +
-                        "type=\"" + trace.type() + "\" " +
-                        "level=\"" + trace.level() + "\" " +
-                        "index=\"" + i + "\" " +
-                        ">\n");
+                    "column=\"" + trace.position().column + "\" " +
+                    "line=\"" + trace.position().line + "\" " +
+                    "file=\"" + trace.position().file + "\" " +
+                    "type=\"" + trace.type() + "\" " +
+                    "level=\"" + trace.level() + "\" " +
+                    "index=\"" + i + "\" " +
+                    ">\n");
                 if (!trace.source().isEmpty()) {
                     raf.writeBytes("<input>\n");
                     raf.writeBytes(cData(trace.source()));
@@ -95,8 +95,8 @@ public class TraceDumper {
             }
             if (ex != null) {
                 raf.writeBytes("<exception " +
-                        " message=\"" + ex.getMessage().replaceAll("\n", " ") + "\"" +
-                        ">\n");
+                    " message=\"" + ex.getMessage().replaceAll("\n", " ") + "\"" +
+                    ">\n");
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 ex.printStackTrace(pw);
@@ -112,28 +112,38 @@ public class TraceDumper {
         }
     }
 
-    private static String cData(String string){
+    private static String cData(String string) {
         return "<![CDATA[" + cDataEscape(string) + "]]>";
     }
 
-    private static String cDataEscape(String string){
-        return string.replaceAll("\\]\\]>","]]]]<![CDATA[>");
+    private static String cDataEscape(String string) {
+        return string.replaceAll("\\]\\]>", "]]]]<![CDATA[>");
     }
 
-    private String spaces(int times){
+    private static String spaces(int times) {
         StringBuilder sb = new StringBuilder();
-        while( times-- > 0 ){
+        while (times-- > 0) {
             sb.append(" ");
         }
         return sb.toString();
     }
-    private String marks(int times){
+
+    private static String marks(int times) {
         StringBuilder sb = new StringBuilder();
-        while( times-- > 0 ){
+        while (times-- > 0) {
             sb.append("#");
         }
         return sb.toString();
     }
+
+    private static String dash(int times) {
+        StringBuilder sb = new StringBuilder();
+        while (times-- > 0) {
+            sb.append("-");
+        }
+        return sb.toString();
+    }
+
     private void dumpText(List<TraceRecord> traces, String fileName, Exception ex) {
         try (final FileOutputStream fos = new FileOutputStream(fileName, true);
              final PrintWriter pw = new PrintWriter(fos)) {
